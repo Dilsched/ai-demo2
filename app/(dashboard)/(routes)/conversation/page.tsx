@@ -12,11 +12,16 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-// import { ChatCompletionRequestMessage } from "openai";
+import OpenAI from "openai";
+import { Empty } from "@/components/empty";
+import { Loader } from "@/components/loder";
+import { UserAvatar } from "@/components/user-avatar";
+import { BotAvatar } from "@/components/bot-avatar";
+import { cn } from "@/lib/utils";
 
 const ConversationPage = () => {        
     const router = useRouter();
-    // const [messages, setMessages] = useState<ChatCompletionRequestMessage[]>([]);
+    const [messages, setMessages] = useState<OpenAI.Chat.CreateChatCompletionRequestMessage[]>([]);
     const form =useForm<z.infer<typeof fromSchema>>({
         resolver:zodResolver(fromSchema),
         defaultValues:{
@@ -27,27 +32,27 @@ const ConversationPage = () => {
    const isloading = form.formState.isSubmitting;
 
    const onsubmit = async (values: z.infer<typeof fromSchema>) => {
-        // try {
-        //     const userMessage:ChatCompletionRequestMessage = {
-        //         role: "user",
-        //         content: values.prompt,
-        //     };
-        //     const newMessage = [...messages, userMessage]
+        try {
+            const userMessage: OpenAI.Chat.CreateChatCompletionRequestMessage = {
+                role: "user",
+                content: values.prompt,
+            };
+            const newMessage = [...messages, userMessage]
 
-        //     const response = await axios.post("/api/conversation" ,{
-        //         messages:newMessage,
-        //     });
+            const response = await axios.post("/api/conversation" ,{
+                messages:newMessage,
+            });
 
-        //     setMessages((current) =>[...current, userMessage, response.data]);
+            setMessages((current) =>[...current, userMessage, response.data]);
 
-        //     form.reset();
+            form.reset();
 
-        // } catch (error: any){
-        //     //to open pro model
-        //     console.log(error);
-        // } finally {
-        //     router.refresh();
-        // }
+        } catch (error: any){
+            //to open pro model
+            console.log(error);
+        } finally {
+            router.refresh();
+        }
    };
     return (
         <div>
@@ -103,8 +108,36 @@ const ConversationPage = () => {
                     </Form>
                 </div>
                 <div className="space-y-4 mt-4">
+                    {isloading && (
+                        <div className="p-8 rounded-lg w-full flex items-center
+                        justify-center bg-muted">
+                            <Loader />
+                        </div>
+                    )}
+                    {messages.length === 0 && !isloading && (
+                        <Empty label="No conversation started." />
+                    )}
                     <div className="flex flex-col-reverse gap-y-4">
-                       
+                       {messages.map((message) =>(
+                            <div 
+                                key={message.content}
+                                className={cn(
+                                    "p-8 w-full flex items-start gap-x-88 rounded-lg",
+                                    message.role === "user"
+                                    ? "bg-white border border-black border-opacity-10"
+                                    : "bg-muted"
+                                )}
+                            >{message.role === "user" ? <UserAvatar /> : <BotAvatar />}
+                            <div
+                              className="text-sm overflow-hidden leading-7"
+                              dangerouslySetInnerHTML={{
+                                __html: message.content
+                                  ? message.content.replace(/\n/g, "<br />")
+                                  : "",
+                              }}
+                            />
+                            </div>
+                        ))}
                     </div>
                 </div>
             </div>
