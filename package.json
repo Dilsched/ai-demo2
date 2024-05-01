@@ -52,13 +52,16 @@
   "clsx": "^2.1.0",
   
     
+  "heroicons-react": "^1.4.1",
+  
+    
   "lucide-react": "^0.309.0",
   
     
   "next": "14.0.4",
   
     
-  "openai": "^4.26.0",
+  "openai": "^3.3.0",
   
     
   "react": "^18",
@@ -70,10 +73,16 @@
   "react-hook-form": "^7.49.3",
   
     
+  "replicate": "^0.29.1",
+  
+    
   "tailwind-merge": "^2.2.0",
   
     
   "tailwindcss-animate": "^1.0.7",
+  
+    
+  "typewriter-effect": "^2.21.0",
   
     
   "zod": "^3.22.4"

@@ -6,13 +6,13 @@ import { ArrowRight, CodeIcon, ImageIcon, MessageSquare, Music, VideoIcon } from
 import { useRouter } from "next/navigation";
 
 const tools =[
-  {
-    label:"conversation",
-    icon:MessageSquare,
-    color:"text-violet-500",
-    bgColor: "bg-violet-500/10",
-    href : "/conversation"
-  },
+  // {
+  //   label:"conversation",
+  //   icon:MessageSquare,
+  //   color:"text-violet-500",
+  //   bgColor: "bg-violet-500/10",
+  //   href : "/conversation"
+  // },
 
   {
     label:"Music Generation",
@@ -38,13 +38,13 @@ const tools =[
     href : "/video"
   },
 
-  {
-    label:"Code Generation",
-    icon:CodeIcon,
-    color:"text-Blue-700",
-    bgColor: "bg-red-500/10",
-    href : "/code"
-  }
+  // {
+  //   label:"Code Generation",
+  //   icon:CodeIcon,
+  //   color:"text-Blue-700",
+  //   bgColor: "bg-red-500/10",
+  //   href : "/code"
+  // }
 
 ]
 

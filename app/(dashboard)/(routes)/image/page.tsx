@@ -3,7 +3,7 @@
 import axios from "axios";
 import * as z from "zod";
 import { Heading } from "@/components/heading";
-import { MessageSquare } from "lucide-react";
+import { ImageIcon, MessageSquare, Music, VideoIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { fromSchema } from "./constants";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -12,18 +12,15 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-// import OpenAI from "openai";
 import { Empty } from "@/components/empty";
 import { Loader } from "@/components/loder";
-import { UserAvatar } from "@/components/user-avatar";
-import { BotAvatar } from "@/components/bot-avatar";
-import { cn } from "@/lib/utils";
-import { ChatCompletionRequestMessage } from "openai";
+import Replicate from 'replicate';
 
 
-const ConversationPage = () => {        
+
+const ImagePage = () => {        
     const router = useRouter();
-    const [messages, setMessages] = useState<ChatCompletionRequestMessage[]>([]);
+    const [image, setImage] = useState<string>();
     const form =useForm<z.infer<typeof fromSchema>>({
         resolver:zodResolver(fromSchema),
         defaultValues:{
@@ -35,17 +32,11 @@ const ConversationPage = () => {
 
    const onsubmit = async (values: z.infer<typeof fromSchema>) => {
         try {
-            const userMessage: ChatCompletionRequestMessage = {
-                role: "user",
-                content: values.prompt,
-            };
-            const newMessages = [...messages, userMessage];
+           setImage(undefined);
+            const response = await axios.post("/api/image", values);
 
-            const response = await axios.post("/api/conversation" ,{
-                messages:newMessages,
-            });
+            setImage(response.data[0]);
 
-            setMessages((current) =>[...current, userMessage, response.data]);
 
             form.reset();
 
@@ -59,11 +50,11 @@ const ConversationPage = () => {
     return (
         <div>
             <Heading
-                title="Conversation"
-                description="AI conversation"
-                icon={MessageSquare}
-                iconColor="text-violet-500"
-                bgColor="bg-violet-500/10"
+                title="Image Generation"
+                description="Turn your prompt into images."
+                icon={ImageIcon}
+                iconColor="text-red-500"
+                bgColor="bg-red-500/10"
             />
             <div className="px-4 lg:px-8">
                 <div>
@@ -93,7 +84,7 @@ const ConversationPage = () => {
                                         focus-visible:ring-0
                                         focus-visible:ring-transperent" 
                                         disabled={isloading}
-                                        placeholder="What is the weather today?"
+                                        placeholder="A cat playing with a ball"
                                         {...field}
                                     />
 
@@ -116,32 +107,16 @@ const ConversationPage = () => {
                             <Loader />
                         </div>
                     )}
-                    {messages.length === 0 && !isloading && (
-                        <Empty label="No conversation started." />
+                    {!image && !isloading && (
+                        <Empty label="No image generated." />
                     )}
-                    <div className="flex flex-col-reverse gap-y-4">
-                       {messages.map((message) =>(
-                            <div 
-                                key={message.content}
-                                className={cn(
-                                    "p-8 w-full flex items-start gap-x-88 rounded-lg",
-                                    message.role === "user"
-                                    ? "bg-white border border-black/10  border-opacity-10"
-                                    : "bg-muted"
-                                )}
-                            >
-                                {message.role === "user" ? <UserAvatar /> : <BotAvatar />}
-                                <p className="text-sm">
-                                    {message.content}
-                                </p>
-                           
-                            </div>
-                        ))}
-                    </div>
+                    {image && (
+                      <img  src={image} alt="Generated image" className="max-w-full h-auto"/>
+                    )}
                 </div>
             </div>
         </div>
      );
 }
 
-export default ConversationPage
+export default ImagePage; 

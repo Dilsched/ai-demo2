@@ -3,7 +3,7 @@
 import axios from "axios";
 import * as z from "zod";
 import { Heading } from "@/components/heading";
-import { MessageSquare } from "lucide-react";
+import { Code, MessageSquare } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { fromSchema } from "./constants";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -21,7 +21,7 @@ import { cn } from "@/lib/utils";
 import { ChatCompletionRequestMessage } from "openai";
 
 
-const ConversationPage = () => {        
+const CodePage = () => {        
     const router = useRouter();
     const [messages, setMessages] = useState<ChatCompletionRequestMessage[]>([]);
     const form =useForm<z.infer<typeof fromSchema>>({
@@ -41,7 +41,7 @@ const ConversationPage = () => {
             };
             const newMessages = [...messages, userMessage];
 
-            const response = await axios.post("/api/conversation" ,{
+            const response = await axios.post("/api/code" ,{
                 messages:newMessages,
             });
 
@@ -59,11 +59,11 @@ const ConversationPage = () => {
     return (
         <div>
             <Heading
-                title="Conversation"
-                description="AI conversation"
-                icon={MessageSquare}
-                iconColor="text-violet-500"
-                bgColor="bg-violet-500/10"
+                title="Code Generation"
+                description="Ai code generator"
+                icon={Code}
+                iconColor="text-blue-500"
+                bgColor="bg-blue-500/10"
             />
             <div className="px-4 lg:px-8">
                 <div>
@@ -93,7 +93,7 @@ const ConversationPage = () => {
                                         focus-visible:ring-0
                                         focus-visible:ring-transperent" 
                                         disabled={isloading}
-                                        placeholder="What is the weather today?"
+                                        placeholder="what is the algorithm for bubble sort?"
                                         {...field}
                                     />
 
@@ -144,4 +144,4 @@ const ConversationPage = () => {
      );
 }
 
-export default ConversationPage
+export default CodePage;
